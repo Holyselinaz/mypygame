@@ -72,37 +72,52 @@ def guide_screen(screen):
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return  # Go back to title screen
+                    return  
             
 def game_over_screen(screen, score):
-    font = pygame.font.SysFont(None, 72)
+    font = pygame.font.SysFont(None, 85)
+    medium_font = pygame.font.SysFont(None, 50)
     small_font = pygame.font.SysFont(None, 36)
+
+    options = ["Restart", "Return to Title", "Quit To Desktop"]
+    selected = 0
+
     while True:
         screen.fill("black")
-        over_surf = font.render("GAME OVER", True, "red")
-        score_surf = small_font.render(f"Score: {score}", True, "white")
-        restart_surf = small_font.render("Press R to Restart or Q to Quit", True, "white")
-        title_surf = small_font.render("Press T for Title Screen", True, "white")
 
-        screen.blit(over_surf, over_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//4)))
-        screen.blit(score_surf, score_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)))
-        screen.blit(restart_surf, restart_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 50)))
-        screen.blit(title_surf, title_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100)))
+        
+        over_surf = font.render("GAME OVER", True, "red")
+        score_surf = medium_font.render(f"Score: {score}", True, "white")
+        screen.blit(over_surf, over_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//3)))
+        screen.blit(score_surf, score_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 - 60)))
+
+        
+        for i, option in enumerate(options):
+            color = "yellow" if i == selected else "white"
+            option_surf = small_font.render(option, True, color)
+            screen.blit(option_surf, option_surf.get_rect(center=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + i * 40)))
 
         pygame.display.flip()
 
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    return "restart" 
-                elif event.key == pygame.K_q:
-                    pygame.quit()
-                    exit()
-                elif event.key == pygame.K_t:
-                    return "title"  
+                if event.key in (pygame.K_w, pygame.K_UP):
+                    selected = (selected - 1) % len(options)
+                elif event.key in (pygame.K_s, pygame.K_DOWN):
+                    selected = (selected + 1) % len(options)
+                elif event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                    choice = options[selected]
+                    if choice == "Restart":
+                        return "restart"
+                    elif choice == "Return to Title":
+                        return "title"
+                    elif choice == "Quit To Desktop":
+                        pygame.quit()
+                        exit()
                 
 def pause_menu(screen):
     font = pygame.font.SysFont(None, 72)
